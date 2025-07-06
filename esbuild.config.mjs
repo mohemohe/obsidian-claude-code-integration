@@ -11,7 +11,7 @@ if you want to view the source, please visit the github repository of this plugi
 
 const prod = (process.argv[2] === "production");
 
-// Main plugin build
+// Main plugin build (includes both Obsidian plugin and MCP server)
 const mainContext = await esbuild.context({
 	banner: {
 		js: banner,
@@ -32,46 +32,34 @@ const mainContext = await esbuild.context({
 		"@lezer/common",
 		"@lezer/highlight",
 		"@lezer/lr",
+		// Node.js built-in modules with node: prefix
+		"node:crypto",
+		"node:http",
+		"node:https",
+		"node:stream",
+		"node:util",
+		"node:events",
+		"node:buffer",
+		"node:net",
+		"node:tls",
+		"node:fs",
+		"node:path",
+		"node:os",
+		"node:child_process",
+		"node:readline",
 		...builtins],
 	format: "cjs",
 	target: "es2018",
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
-	treeShaking: true,
+	treeShaking: false, // Disable tree shaking to keep both code paths
 	outfile: "dist/main.js",
 	minify: prod,
 });
 
-// MCP server build
-const mcpContext = await esbuild.context({
-	banner: {
-		js: banner,
-	},
-	entryPoints: ["src/mcp-permission-server.ts"],
-	bundle: true,
-	external: [],
-	format: "cjs",
-	platform: "node",
-	target: "node18",
-	logLevel: "info",
-	sourcemap: prod ? false : "inline",
-	treeShaking: true,
-	outfile: "dist/mcp-permission-server.js",
-	define: {
-		'process.env.NODE_ENV': JSON.stringify(prod ? 'production' : 'development')
-	},
-	minify: prod,
-});
-
 if (prod) {
-	await Promise.all([
-		mainContext.rebuild(),
-		mcpContext.rebuild()
-	]);
+	await mainContext.rebuild();
 	process.exit(0);
 } else {
-	await Promise.all([
-		mainContext.watch(),
-		mcpContext.watch()
-	]);
+	await mainContext.watch();
 }

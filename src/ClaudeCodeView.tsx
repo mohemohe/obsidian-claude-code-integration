@@ -3,7 +3,7 @@ import * as React from "react";
 import { type Root, createRoot } from "react-dom/client";
 
 import { ClaudeCodeChat } from "./components/ClaudeCodeChat";
-import type ClaudeCodePlugin from "./main";
+import type ClaudeCodePlugin from "./obsidian-plugin";
 
 export const VIEW_TYPE_CLAUDE_CODE = "claude-code-view";
 

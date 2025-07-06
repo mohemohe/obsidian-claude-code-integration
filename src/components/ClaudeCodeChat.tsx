@@ -1,6 +1,6 @@
 import * as React from "react";
 import { type App, TFile } from "obsidian";
-import type ClaudeCodePlugin from "../main";
+import type ClaudeCodePlugin from "../obsidian-plugin";
 import { ClaudeCodeService } from "../services/ClaudeCodeService";
 
 import { unstable_batchedUpdates } from "react-dom";

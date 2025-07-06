@@ -1,11 +1,16 @@
-import * as crypto from "node:crypto";
-import * as http from "node:http";
-import * as readline from "node:readline";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { z } from "zod";
-
-import type { AddressInfo } from "node:net";
+// MCP Server entry point - runs when MCP_SERVER_MODE=true
+// @ts-ignore
+const crypto = require("crypto");
+// @ts-ignore
+const http = require("http");
+// @ts-ignore
+const readline = require("readline");
+// @ts-ignore
+const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
+// @ts-ignore
+const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp.js");
+// @ts-ignore
+const { z } = require("zod");
 
 interface PermissionRequest {
 	id: string;
@@ -48,7 +53,7 @@ const pendingRequests = new Map<
 >();
 
 // Handle stdin messages from Obsidian
-rl.on("line", (line) => {
+rl.on("line", (line: string) => {
 	if (line.startsWith("PERMISSION_RESPONSE:")) {
 		const jsonStr = line.substring("PERMISSION_RESPONSE:".length);
 		try {
@@ -162,7 +167,7 @@ server
 		console.log("[MCP-HTTP] Registered tools:", ["approval_prompt"]);
 
 		// Create HTTP server
-		const httpServer = http.createServer(async (req, res) => {
+		const httpServer = http.createServer(async (req: any, res: any) => {
 			console.log(
 				`[MCP-HTTP] ${req.method} ${req.url} from ${req.headers["user-agent"]}`,
 			);
@@ -187,7 +192,7 @@ server
 			// Handle MCP requests
 			if (req.method === "POST") {
 				let body = "";
-				req.on("data", (chunk) => {
+				req.on("data", (chunk: any) => {
 					body += chunk;
 					console.log("[MCP-HTTP] Receiving data chunk, size:", chunk.length);
 				});
@@ -290,7 +295,7 @@ server
 
 		// Start listening
 		httpServer.listen(port, "127.0.0.1", () => {
-			const actualPort = (httpServer.address() as AddressInfo).port;
+			const actualPort = (httpServer.address() as any).port;
 			console.log(
 				`[MCP-HTTP] HTTP server started on http://127.0.0.1:${actualPort}`,
 			);
@@ -298,7 +303,7 @@ server
 			console.log(`MCP_SERVER_STARTED:${JSON.stringify({ port: actualPort })}`);
 		});
 
-		httpServer.on("error", (error) => {
+		httpServer.on("error", (error: any) => {
 			console.error("[MCP-HTTP] HTTP server error:", error);
 			console.error(
 				`MCP_SERVER_ERROR:${JSON.stringify({ error: error.message })}`,
@@ -306,7 +311,7 @@ server
 			process.exit(1);
 		});
 	})
-	.catch((error) => {
+	.catch((error: any) => {
 		console.error("[MCP-HTTP] Failed to connect server to transport:", error);
 		process.exit(1);
 	});

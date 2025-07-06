@@ -1,5 +1,5 @@
 import { type App, TFile } from "obsidian";
-import type ClaudeCodePlugin from "../main";
+import type ClaudeCodePlugin from "../obsidian-plugin";
 import {
 	type Message,
 	ToolUse,

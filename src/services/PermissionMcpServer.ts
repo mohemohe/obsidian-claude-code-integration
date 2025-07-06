@@ -1,5 +1,5 @@
 import type { PermissionRequest, PermissionResponse } from "../types";
-import type ClaudeCodePlugin from "../main";
+import type ClaudeCodePlugin from "../obsidian-plugin";
 
 export interface PermissionCallback {
 	onPermissionRequest: (request: PermissionRequest) => void;
@@ -43,7 +43,7 @@ export class PermissionMcpServer {
 				const pluginDir = (this.plugin.app.vault.adapter as any).basePath || "";
 				const mcpServerPath = join(
 					pluginDir,
-					".obsidian/plugins/obsidian-claude-code-integration/mcp-permission-server.js",
+					".obsidian/plugins/obsidian-claude-code-integration/main.js",
 				);
 
 				console.debug("[MCP] Starting MCP permission server");
@@ -52,6 +52,9 @@ export class PermissionMcpServer {
 
 				// Prepare environment with custom PATH if needed
 				const customEnv = { ...process.env };
+				// Set MCP server mode environment variable
+				customEnv.MCP_SERVER_MODE = "true";
+				
 				if (this.plugin.settings.envPath) {
 					const separator = process.platform === "win32" ? ";" : ":";
 					customEnv.PATH =
@@ -683,10 +686,10 @@ export class PermissionMcpServer {
 					const cmd = `ps -p ${pid} -o command=`;
 					const result = execSync(cmd, { encoding: "utf8" });
 
-					// Check if it's running our MCP server script
+					// Check if it's running our main.js with MCP_SERVER_MODE
 					return (
-						result.includes("mcp-permission-server.js") ||
-						result.includes("mcp-permission-server")
+						result.includes("main.js") &&
+						result.includes("MCP_SERVER_MODE")
 					);
 				} catch {
 					// Process might have died between checks
