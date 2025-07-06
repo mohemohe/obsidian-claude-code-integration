@@ -54,7 +54,7 @@ export class PermissionMcpServer {
 				const customEnv = { ...process.env };
 				// Set MCP server mode environment variable
 				customEnv.MCP_SERVER_MODE = "true";
-				
+
 				if (this.plugin.settings.envPath) {
 					const separator = process.platform === "win32" ? ";" : ":";
 					customEnv.PATH =
@@ -127,7 +127,7 @@ export class PermissionMcpServer {
 								const info = JSON.parse(jsonStr);
 								this.port = info.port;
 								this.isRunning = true;
-								console.log(
+								console.debug(
 									`[MCP] Permission server started on port ${this.port}`,
 								);
 								console.debug("[MCP] Server info received:", info);
@@ -139,7 +139,7 @@ export class PermissionMcpServer {
 								console.debug("[MCP] Starting server initialization...");
 								this.initializeServer()
 									.then(() => {
-										console.log("[MCP] Server initialization completed");
+										console.debug("[MCP] Server initialization completed");
 										resolve(this.port);
 									})
 									.catch((error) => {
@@ -224,7 +224,7 @@ export class PermissionMcpServer {
 
 				// Handle process exit
 				this.mcpProcess.on("close", (code: number) => {
-					console.log("MCP process exited with code:", code);
+					console.debug("MCP process exited with code:", code);
 
 					// Only reset state if not already running (i.e., unexpected exit)
 					if (this.isRunning) {
@@ -269,7 +269,7 @@ export class PermissionMcpServer {
 		}
 
 		const pid = this.mcpProcess.pid;
-		console.log(`[MCP] Force killing MCP permission server (PID: ${pid})...`);
+		console.debug(`[MCP] Force killing MCP permission server (PID: ${pid})...`);
 
 		// Clean up state immediately
 		this.mcpProcess = null;
@@ -281,7 +281,7 @@ export class PermissionMcpServer {
 		// Try to kill the process
 		try {
 			process.kill(pid, "SIGKILL");
-			console.log(`[MCP] SIGKILL sent to process ${pid}`);
+			console.debug(`[MCP] SIGKILL sent to process ${pid}`);
 
 			// Give it a moment to die
 			await new Promise((resolve) => setTimeout(resolve, 100));
@@ -290,7 +290,7 @@ export class PermissionMcpServer {
 			if (this.isProcessRunning(pid)) {
 				console.error(`[MCP] Process ${pid} still running after SIGKILL`);
 			} else {
-				console.log(`[MCP] Process ${pid} successfully killed`);
+				console.debug(`[MCP] Process ${pid} successfully killed`);
 			}
 		} catch (error) {
 			console.error(`[MCP] Failed to kill process ${pid}:`, error);
@@ -400,7 +400,7 @@ export class PermissionMcpServer {
 		console.debug("[MCP] Verifying server registration...");
 		const updatedServers = await this.getRegisteredServers();
 		if (updatedServers.includes(currentServerName)) {
-			console.log(
+			console.debug(
 				`[MCP] Server ${currentServerName} successfully verified in registry`,
 			);
 		} else {
@@ -582,7 +582,7 @@ export class PermissionMcpServer {
 			addProcess.on("close", (code: number) => {
 				console.debug(`[MCP] Add command exited with code ${code}`);
 				if (code === 0) {
-					console.log("[MCP] MCP server registered successfully");
+					console.debug("[MCP] MCP server registered successfully");
 					console.debug("[MCP] Final registration stdout:", stdout);
 					console.debug("[MCP] Final registration stderr:", stderr);
 					resolve(void 0);
@@ -637,7 +637,7 @@ export class PermissionMcpServer {
 				if (this.isProcessRunning(pid)) {
 					const isOurProcess = await this.verifyProcessIsMcpServer(pid);
 					if (isOurProcess) {
-						console.log(
+						console.debug(
 							`[MCP] Killing existing MCP server process (PID: ${pid})`,
 						);
 						try {

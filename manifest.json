@@ -3,7 +3,7 @@
 	"name": "Claude Code Integration",
 	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Integrate Claude Code AI coding agent into your Obsidian vault.",
+	"description": "Integrate Claude Code AI coding agent into your vault.",
 	"author": "mohemohe",
 	"authorUrl": "https://github.com/mohemohe",
 	"fundingUrl": "",

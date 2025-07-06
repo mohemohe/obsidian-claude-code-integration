@@ -111,7 +111,7 @@ export class ClaudeCodeService {
 
 				// Get the vault root path
 				const vaultPath = (app.vault.adapter as any).basePath || "";
-				console.log(`Setting working directory to vault: ${vaultPath}`);
+				console.debug(`Setting working directory to vault: ${vaultPath}`);
 
 				// Prepare environment with custom PATH
 				const customEnv = { ...process.env };
@@ -120,9 +120,9 @@ export class ClaudeCodeService {
 					const separator = process.platform === "win32" ? ";" : ":";
 					customEnv.PATH =
 						this.plugin.settings.envPath + separator + (process.env.PATH || "");
-					console.log(`Using custom PATH: ${customEnv.PATH}`);
+					console.debug(`Using custom PATH: ${customEnv.PATH}`);
 				}
-				console.log(`Current process.cwd() before spawn: ${process.cwd()}`);
+				console.debug(`Current process.cwd() before spawn: ${process.cwd()}`);
 
 				// Build command arguments
 				const args = ["--verbose", "--output-format", "stream-json"];
@@ -132,7 +132,7 @@ export class ClaudeCodeService {
 					const toolName =
 						this.plugin.context.permissionServer.getMcpToolName();
 					args.push("--permission-prompt-tool", toolName);
-					console.log(`[Claude] Using permission prompt tool: ${toolName}`);
+					console.debug(`[Claude] Using permission prompt tool: ${toolName}`);
 					console.debug(
 						"[Claude] MCP server port:",
 						this.plugin.context.permissionServer.getPort(),
@@ -218,7 +218,7 @@ export class ClaudeCodeService {
 											const isMcpTool =
 												block.name && block.name.includes("approval_prompt");
 											if (isMcpTool) {
-												console.log(
+												console.debug(
 													`[Claude] MCP approval tool invoked: ${block.name}`,
 												);
 												console.debug("[Claude] MCP tool details:", block);
@@ -262,19 +262,19 @@ export class ClaudeCodeService {
 							} else if (message.type === "system") {
 								// System messages for debugging
 								if (message.subtype === "init" && "mcp_servers" in message) {
-									console.log(
+									console.debug(
 										"[Claude] System init message with MCP servers:",
 										message.mcp_servers,
 									);
 									if ("cwd" in message) {
-										console.log(
+										console.debug(
 											"[Claude] Claude Code working directory:",
 											message.cwd,
 										);
 									}
 									console.debug("[Claude] Full init message:", message);
 								} else {
-									console.log("[Claude] System message:", message);
+									console.debug("[Claude] System message:", message);
 								}
 							} else if (message.type === "user" && "message" in message) {
 								// Handle tool_result messages
@@ -367,14 +367,14 @@ export class ClaudeCodeService {
 							this.plugin.context.permissionServer.getMcpProcessPid();
 						console.debug("[Claude] MCP PID:", mcpPid);
 						if (mcpPid) {
-							console.log(
+							console.debug(
 								"[Claude] Killing MCP server process (PID:",
 								mcpPid,
 								") for clean restart next time",
 							);
 							try {
 								process.kill(mcpPid, "SIGKILL");
-								console.log("[Claude] SIGKILL sent to MCP server");
+								console.debug("[Claude] SIGKILL sent to MCP server");
 							} catch (error) {
 								console.error("[Claude] Failed to kill MCP server:", error);
 							}
@@ -471,13 +471,13 @@ export class ClaudeCodeService {
 	restartProcess() {
 		// Kill existing process if any
 		if (this.currentProcess) {
-			console.log("Killing existing Claude Code process...");
+			console.debug("Killing existing Claude Code process...");
 			this.currentProcess.kill("SIGTERM");
 			this.currentProcess = null;
 		}
 
 		// The process will be restarted automatically when next message is sent
-		console.log("Claude Code process will be restarted on next message");
+		console.debug("Claude Code process will be restarted on next message");
 	}
 
 	private async extractFileContext(
