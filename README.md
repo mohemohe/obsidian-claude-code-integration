@@ -55,7 +55,7 @@ Write, delete, and other call tool operations require your explicit approval thr
 
 1. After enabling the plugin, you can access Claude Code through:
    - The ribbon icon in the left sidebar
-   - Command palette: `Claude Code Obsidian Integration: Open Claude Code`
+   - Command palette: `Claude Code Integration: Open Claude Code`
    
 2. Configure the plugin settings:
    - Claude Code installation path (if not in default location)

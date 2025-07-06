@@ -53,7 +53,7 @@
 
 1. プラグインを有効にした後、以下の方法でClaude Codeにアクセスできます：
    - 左サイドバーのリボンアイコン
-   - コマンドパレット: `Claude Code Obsidian Integration: Open Claude Code`
+   - コマンドパレット: `Claude Code Integration: Open Claude Code`
    
 2. プラグイン設定を構成します：
    - Claude Codeインストールパス（デフォルトの場所にない場合）

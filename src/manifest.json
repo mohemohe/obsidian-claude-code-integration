@@ -1,6 +1,6 @@
 {
-	"id": "obsidian-claude-code-integration",
-	"name": "Claude Code Obsidian Integration",
+	"id": "claude-code-integration",
+	"name": "Claude Code Integration",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Integrate Claude Code AI coding agent into your Obsidian vault.",
