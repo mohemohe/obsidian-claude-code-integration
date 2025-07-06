@@ -33,10 +33,10 @@ export class ClaudeCodeService {
 		// Ensure MCP server is running
 		if (this.plugin.context.permissionServer) {
 			if (!this.plugin.context.permissionServer.isServerRunning()) {
-				console.log("[Claude] MCP server not running, starting it...");
+				console.debug("[Claude] MCP server not running, starting it...");
 				try {
 					const port = await this.plugin.context.permissionServer.start();
-					console.log(`[Claude] MCP server started on port ${port}`);
+					console.debug(`[Claude] MCP server started on port ${port}`);
 
 					// Wait a bit for server to be fully ready
 					await new Promise((resolve) => setTimeout(resolve, 500));
@@ -107,7 +107,7 @@ export class ClaudeCodeService {
 					return;
 				}
 
-				console.log(`Executing Claude Code at: ${claudeCommand}`);
+				console.debug(`Executing Claude Code at: ${claudeCommand}`);
 
 				// Get the vault root path
 				const vaultPath = (app.vault.adapter as any).basePath || "";

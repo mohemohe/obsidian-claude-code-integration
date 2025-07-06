@@ -78,7 +78,7 @@ const server = new McpServer({
 });
 
 // Register approval prompt tool (must be named "approval_prompt" for Claude Code SDK)
-console.log("[MCP] Registering approval_prompt tool...");
+console.debug("[MCP] Registering approval_prompt tool...");
 server.registerTool(
 	"approval_prompt",
 	{
@@ -99,7 +99,7 @@ server.registerTool(
 		};
 
 		// Send permission request to stdout for Obsidian to detect
-		console.log(`PERMISSION_REQUEST:${JSON.stringify(request)}`);
+		console.debug(`PERMISSION_REQUEST:${JSON.stringify(request)}`);
 
 		// Create a promise that will be resolved when Obsidian responds
 		const responsePromise = new Promise<PermissionResponse>(
@@ -163,15 +163,15 @@ const transport = new StreamableHTTPServerTransport({
 server
 	.connect(transport)
 	.then(() => {
-		console.log("[MCP-HTTP] Server connected to transport");
-		console.log("[MCP-HTTP] Registered tools:", ["approval_prompt"]);
+		console.debug("[MCP-HTTP] Server connected to transport");
+		console.debug("[MCP-HTTP] Registered tools:", ["approval_prompt"]);
 
 		// Create HTTP server
 		const httpServer = http.createServer(async (req: any, res: any) => {
-			console.log(
+			console.debug(
 				`[MCP-HTTP] ${req.method} ${req.url} from ${req.headers["user-agent"]}`,
 			);
-			console.log("[MCP-HTTP] Headers:", req.headers);
+			console.debug("[MCP-HTTP] Headers:", req.headers);
 
 			// CORS headers for Claude
 			res.setHeader("Access-Control-Allow-Origin", "*");
@@ -183,7 +183,7 @@ server
 
 			// Handle OPTIONS requests
 			if (req.method === "OPTIONS") {
-				console.log("[MCP-HTTP] Handling OPTIONS request");
+				console.debug("[MCP-HTTP] Handling OPTIONS request");
 				res.writeHead(200);
 				res.end();
 				return;
@@ -194,13 +194,13 @@ server
 				let body = "";
 				req.on("data", (chunk: any) => {
 					body += chunk;
-					console.log("[MCP-HTTP] Receiving data chunk, size:", chunk.length);
+					console.debug("[MCP-HTTP] Receiving data chunk, size:", chunk.length);
 				});
 				req.on("end", async () => {
-					console.log("[MCP-HTTP] Request body:", body);
+					console.debug("[MCP-HTTP] Request body:", body);
 					try {
 						const jsonBody = JSON.parse(body);
-						console.log(
+						console.debug(
 							"[MCP-HTTP] Parsed JSON request:",
 							JSON.stringify(jsonBody, null, 2),
 						);
@@ -214,8 +214,8 @@ server
 							jsonBody.method === "tools/call" &&
 							jsonBody.params?.name === "approval_prompt"
 						) {
-							console.log("[MCP-HTTP] Approval prompt tool invoked!");
-							console.log(
+							console.debug("[MCP-HTTP] Approval prompt tool invoked!");
+							console.debug(
 								"[MCP-HTTP] Tool arguments:",
 								jsonBody.params?.arguments,
 							);
@@ -223,14 +223,14 @@ server
 
 						// Handle initialize requests specially
 						if (jsonBody.method === "initialize") {
-							console.log(
+							console.debug(
 								"[MCP-HTTP] Initialize request received for session:",
 								sessionId,
 							);
 
 							// Check if this session is already initialized
 							if (sessionIdMap.has(sessionId)) {
-								console.log(
+								console.debug(
 									"[MCP-HTTP] Session already initialized, allowing re-initialization",
 								);
 								// Clear the session to allow re-initialization
@@ -258,7 +258,7 @@ server
 							if (chunk) {
 								responseData += chunk.toString();
 							}
-							console.log(
+							console.debug(
 								"[MCP-HTTP] Response for",
 								jsonBody.method,
 								":",
@@ -267,9 +267,9 @@ server
 
 							// Log specific method responses
 							if (jsonBody.method === "tools/list") {
-								console.log("[MCP-HTTP] Tools list response sent");
+								console.debug("[MCP-HTTP] Tools list response sent");
 							} else if (jsonBody.method === "initialize") {
-								console.log(
+								console.debug(
 									"[MCP-HTTP] Initialize completed, tools should be available now",
 								);
 							}

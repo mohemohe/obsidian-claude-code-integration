@@ -37,7 +37,7 @@ export default class ClaudeCodePlugin extends Plugin {
 		// Get version from manifest
 		const manifest = (this as any).manifest;
 		const version = manifest?.version || "unknown";
-		console.log(`Plugin obsidian-claude-code-integration v${version} initialized`);
+		console.debug(`Plugin obsidian-claude-code-integration v${version} initialized`);
 
 		await this.loadSettings();
 
@@ -45,7 +45,7 @@ export default class ClaudeCodePlugin extends Plugin {
 		try {
 			this.context.permissionServer = new PermissionMcpServer(this);
 			const port = await this.context.permissionServer.start();
-			console.log(`MCP Permission server started on port ${port}`);
+			console.debug(`MCP Permission server started on port ${port}`);
 		} catch (error) {
 			console.error("Failed to start MCP permission server:", error);
 			new Notice(
@@ -93,7 +93,7 @@ export default class ClaudeCodePlugin extends Plugin {
 		// Stop MCP permission server
 		if (this.context.permissionServer) {
 			await this.context.permissionServer.stop();
-			console.log("MCP Permission server stopped");
+			console.debug("MCP Permission server stopped");
 		}
 	}
 
@@ -171,7 +171,7 @@ export default class ClaudeCodePlugin extends Plugin {
 				}
 
 				await this.saveSettings();
-				console.log(`Auto-detected Claude Code at: ${path}`);
+				console.debug(`Auto-detected Claude Code at: ${path}`);
 				new Notice(`Claude Code found at: ${path}`);
 				break;
 			}

@@ -305,7 +305,7 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 
 		// Restart MCP server and Claude Code process
 		if (plugin.context.permissionServer) {
-			console.log("[Chat] Restarting MCP server for new session...");
+			console.debug("[Chat] Restarting MCP server for new session...");
 			await plugin.context.permissionServer.stop();
 
 			// Wait a bit before restarting
@@ -313,7 +313,7 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 
 			try {
 				const port = await plugin.context.permissionServer.start();
-				console.log(`[Chat] MCP server restarted on port ${port}`);
+				console.debug(`[Chat] MCP server restarted on port ${port}`);
 			} catch (error) {
 				console.error("[Chat] Failed to restart MCP server:", error);
 			}

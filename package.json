@@ -1,12 +1,12 @@
 {
   "name": "obsidian-claude-code-integration",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code integration for Obsidian",
   "scripts": {
     "dev": "npm run build && npm run build:sync",
     "watch": "npm-watch dev",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && npm run build:copy",
-    "build:copy": "mkdir -p dist && cp src/manifest.json dist/ && cp src/styles.css dist/",
+    "build:copy": "mkdir -p dist && cp manifest.json dist/ && cp src/styles.css dist/",
     "build:sync": "node postbuild.mjs",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
     "lint": "biome check --write src"
