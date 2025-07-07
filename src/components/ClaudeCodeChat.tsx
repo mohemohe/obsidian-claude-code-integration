@@ -281,17 +281,6 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 		}
 	};
 
-	const adjustTextareaHeight = React.useCallback(() => {
-		if (inputRef.current) {
-			inputRef.current.style.height = "auto";
-			inputRef.current.style.height = inputRef.current.scrollHeight + "px";
-		}
-	}, []);
-
-	React.useEffect(() => {
-		adjustTextareaHeight();
-	}, [input]);
-
 	const handleNewSession = async () => {
 		// Clear messages
 		setState({

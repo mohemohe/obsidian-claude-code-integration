@@ -1,6 +1,7 @@
 import {
 	type App,
 	Notice,
+	Platform,
 	Plugin,
 	PluginSettingTab,
 	Setting,
@@ -35,22 +36,24 @@ export default class ClaudeCodePlugin extends Plugin {
 
 	async onload() {
 		// Get version from manifest
-		const manifest = (this as any).manifest;
+		const manifest = this.manifest;
 		const version = manifest?.version || "unknown";
 		console.debug(`Plugin claude-code-integration v${version} initialized`);
 
 		await this.loadSettings();
 
-		// Start MCP permission server
-		try {
-			this.context.permissionServer = new PermissionMcpServer(this);
-			const port = await this.context.permissionServer.start();
-			console.debug(`MCP Permission server started on port ${port}`);
-		} catch (error) {
-			console.error("Failed to start MCP permission server:", error);
-			new Notice(
-				"Failed to start permission server. Some features may not work.",
-			);
+		// Start MCP permission server (desktop only)
+		if (Platform.isDesktopApp) {
+			try {
+				this.context.permissionServer = new PermissionMcpServer(this);
+				const port = await this.context.permissionServer.start();
+				console.debug(`MCP Permission server started on port ${port}`);
+			} catch (error) {
+				console.error("Failed to start MCP permission server:", error);
+				new Notice(
+					"Failed to start permission server. Some features may not work.",
+				);
+			}
 		}
 
 		// Auto-detect Claude path if not set
@@ -88,8 +91,6 @@ export default class ClaudeCodePlugin extends Plugin {
 	}
 
 	async onunload() {
-		this.app.workspace.detachLeavesOfType(VIEW_TYPE_CLAUDE_CODE);
-
 		// Stop MCP permission server
 		if (this.context.permissionServer) {
 			await this.context.permissionServer.stop();
@@ -129,6 +130,11 @@ export default class ClaudeCodePlugin extends Plugin {
 	}
 
 	async autoDetectClaudePath() {
+		// Only attempt auto-detection on desktop
+		if (!Platform.isDesktopApp) {
+			return;
+		}
+
 		// @ts-ignore - Electron provides Node.js APIs
 		const { existsSync } = require("fs");
 		// @ts-ignore - Electron provides Node.js APIs
@@ -248,6 +254,12 @@ class ClaudeCodeSettingTab extends PluginSettingTab {
 			.setDesc("Test if Node.js can be found and executed")
 			.addButton((button) =>
 				button.setButtonText("Test Node").onClick(async () => {
+					// Only test on desktop
+					if (!Platform.isDesktopApp) {
+						new Notice("Node.js testing is only available on desktop");
+						return;
+					}
+
 					// @ts-ignore - Electron provides Node.js APIs
 					const { spawn } = require("child_process");
 					// @ts-ignore - Electron provides Node.js APIs

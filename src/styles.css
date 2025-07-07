@@ -120,6 +120,7 @@
 	width: 100%;
 	min-height: 40px;
 	max-height: 200px;
+  field-sizing: content;
 	padding: 8px 12px;
 	border: none;
 	background-color: var(--background-primary);
@@ -128,6 +129,7 @@
 	font-family: inherit;
 	font-size: 14px;
 	line-height: 1.5;
+	overflow-y: auto;
 }
 
 .claude-code-input:focus {

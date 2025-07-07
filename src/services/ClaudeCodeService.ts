@@ -1,12 +1,7 @@
-import { type App, TFile } from "obsidian";
+import { type App, Notice, Platform, TFile, type FileSystemAdapter } from "obsidian";
 import type ClaudeCodePlugin from "../obsidian-plugin";
 import {
 	type Message,
-	ToolUse,
-	ToolResult,
-	MessageType,
-	PermissionRequest,
-	PermissionResponse,
 } from "../types";
 import type { SDKMessage } from "@anthropic-ai/claude-code";
 
@@ -24,6 +19,11 @@ export class ClaudeCodeService {
 		onMessage?: (message: Message) => void,
 		onUpdateMessage?: (id: string, update: Partial<Message>) => void,
 	): Promise<string> {
+		if (!Platform.isDesktopApp) {
+			new Notice("Claude Code Integration is only available on desktop");
+      return "";
+		}
+
 		// Cancel any ongoing request
 		if (this.currentProcess) {
 			this.currentProcess.kill();
@@ -110,7 +110,7 @@ export class ClaudeCodeService {
 				console.debug(`Executing Claude Code at: ${claudeCommand}`);
 
 				// Get the vault root path
-				const vaultPath = (app.vault.adapter as any).basePath || "";
+				const vaultPath = (app.vault.adapter as FileSystemAdapter).getBasePath() || "";
 				console.debug(`Setting working directory to vault: ${vaultPath}`);
 
 				// Prepare environment with custom PATH

@@ -1,5 +1,6 @@
 import type { PermissionRequest, PermissionResponse } from "../types";
 import type ClaudeCodePlugin from "../obsidian-plugin";
+import { type FileSystemAdapter, Notice, Platform } from "obsidian";
 
 export interface PermissionCallback {
 	onPermissionRequest: (request: PermissionRequest) => void;
@@ -25,6 +26,11 @@ export class PermissionMcpServer {
 	}
 
 	async start(): Promise<number> {
+    if (!Platform.isDesktopApp) {
+      new Notice("Permission MCP server is only available on desktop");
+      return -1;
+    }
+
 		if (this.isRunning) {
 			return this.port;
 		}
@@ -40,10 +46,11 @@ export class PermissionMcpServer {
 				const { join } = require("path");
 
 				// Get the plugin directory
-				const pluginDir = (this.plugin.app.vault.adapter as any).basePath || "";
+				const pluginDir = (this.plugin.app.vault.adapter as FileSystemAdapter).getBasePath()  || "";
 				const mcpServerPath = join(
 					pluginDir,
-					".obsidian/plugins/claude-code-integration/main.js",
+					this.plugin.app.vault.configDir,
+					"plugins/claude-code-integration/main.js",
 				);
 
 				console.debug("[MCP] Starting MCP permission server");
@@ -351,13 +358,17 @@ export class PermissionMcpServer {
 	}
 
 	private getVaultPath(): string {
-		return (this.plugin.app.vault.adapter as any).basePath || "";
+    if (!Platform.isDesktopApp) {
+      return "";
+    }
+
+		return (this.plugin.app.vault.adapter as FileSystemAdapter).getBasePath()  || "";
 	}
 
 	private getPidFilePath(): string {
 		const { join } = require("path");
 		const pluginDir = this.getVaultPath();
-		return join(pluginDir, ".obsidian/plugins/claude-code-integration/.mcp-pid");
+		return join(pluginDir, this.plugin.app.vault.configDir, "plugins/claude-code-integration/.mcp-pid");
 	}
 
 	private async initializeServer(): Promise<void> {
@@ -411,6 +422,10 @@ export class PermissionMcpServer {
 	}
 
 	private async getRegisteredServers(): Promise<string[]> {
+    if (!Platform.isDesktopApp) {
+      return [];
+    }
+
 		const { spawn } = require("child_process");
 
 		const vaultPath = this.getVaultPath();
@@ -601,6 +616,10 @@ export class PermissionMcpServer {
 	}
 
 	private getClaudeEnvironment() {
+    if (!Platform.isDesktopApp) {
+      return {};
+    }
+
 		const customEnv = { ...process.env };
 		if (this.plugin.settings.envPath) {
 			const separator = process.platform === "win32" ? ";" : ":";
@@ -677,6 +696,10 @@ export class PermissionMcpServer {
 	}
 
 	private async verifyProcessIsMcpServer(pid: number): Promise<boolean> {
+    if (!Platform.isDesktopApp) {
+      return false;
+    }
+
 		try {
 			// On macOS/Linux, we can check the process command line
 			if (process.platform !== "win32") {
