@@ -37,7 +37,7 @@ export default class ClaudeCodePlugin extends Plugin {
 		// Get version from manifest
 		const manifest = (this as any).manifest;
 		const version = manifest?.version || "unknown";
-		console.debug(`Plugin obsidian-claude-code-integration v${version} initialized`);
+		console.debug(`Plugin claude-code-integration v${version} initialized`);
 
 		await this.loadSettings();
 

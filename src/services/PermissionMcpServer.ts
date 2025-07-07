@@ -43,7 +43,7 @@ export class PermissionMcpServer {
 				const pluginDir = (this.plugin.app.vault.adapter as any).basePath || "";
 				const mcpServerPath = join(
 					pluginDir,
-					".obsidian/plugins/obsidian-claude-code-integration/main.js",
+					".obsidian/plugins/claude-code-integration/main.js",
 				);
 
 				console.debug("[MCP] Starting MCP permission server");
@@ -357,7 +357,7 @@ export class PermissionMcpServer {
 	private getPidFilePath(): string {
 		const { join } = require("path");
 		const pluginDir = this.getVaultPath();
-		return join(pluginDir, ".obsidian/plugins/obsidian-claude-code-integration/.mcp-pid");
+		return join(pluginDir, ".obsidian/plugins/claude-code-integration/.mcp-pid");
 	}
 
 	private async initializeServer(): Promise<void> {

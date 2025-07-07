@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 
 const src = 'dist';
-const pluginName = 'obsidian-claude-code-integration';
+const pluginName = 'claude-code-integration';
 const home = homedir();
 const basePath = join(home, 'Library/Mobile Documents/iCloud~md~obsidian/Documents/Develop/.obsidian/plugins');
 const dest = join(basePath, pluginName);
