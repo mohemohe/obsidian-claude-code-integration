@@ -1,6 +1,6 @@
 {
   "name": "obsidian-claude-code-integration",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Claude Code integration for Obsidian",
   "scripts": {
     "dev": "npm run build && npm run build:sync",
