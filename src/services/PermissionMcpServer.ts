@@ -37,6 +37,9 @@ export class PermissionMcpServer {
 
 		// Check for existing PID file and clean up if necessary
 		await this.checkAndCleanExistingProcess();
+		
+		// Add small delay after cleanup to ensure port is released
+		await new Promise((resolve) => setTimeout(resolve, 500));
 
 		return new Promise((resolve, reject) => {
 			try {
@@ -660,9 +663,18 @@ export class PermissionMcpServer {
 							`[MCP] Killing existing MCP server process (PID: ${pid})`,
 						);
 						try {
-							process.kill(pid, "SIGKILL");
-							// Give it a moment to die
-							await new Promise((resolve) => setTimeout(resolve, 100));
+							// First try SIGTERM for graceful shutdown
+							process.kill(pid, "SIGTERM");
+							// Wait for graceful shutdown
+							await new Promise((resolve) => setTimeout(resolve, 500));
+							
+							// Check if still running
+							if (this.isProcessRunning(pid)) {
+								console.debug(`[MCP] Process ${pid} still running, sending SIGKILL`);
+								process.kill(pid, "SIGKILL");
+								// Give it more time to die and release port
+								await new Promise((resolve) => setTimeout(resolve, 1000));
+							}
 						} catch (error) {
 							console.debug(`[MCP] Failed to kill process ${pid}:`, error);
 						}
@@ -709,10 +721,11 @@ export class PermissionMcpServer {
 					const cmd = `ps -p ${pid} -o command=`;
 					const result = execSync(cmd, { encoding: "utf8" });
 
-					// Check if it's running our main.js with MCP_SERVER_MODE
+					// Check if it's running our main.js with the specific port
 					return (
 						result.includes("main.js") &&
-						result.includes("MCP_SERVER_MODE")
+						result.includes("--port") &&
+						result.includes(this.port.toString())
 					);
 				} catch {
 					// Process might have died between checks

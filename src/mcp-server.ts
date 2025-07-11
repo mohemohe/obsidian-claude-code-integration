@@ -303,6 +303,9 @@ server
 			console.log(`MCP_SERVER_STARTED:${JSON.stringify({ port: actualPort })}`);
 		});
 
+		// Store server reference for cleanup
+		httpServerRef = httpServer;
+		
 		httpServer.on("error", (error: any) => {
 			console.error("[MCP-HTTP] HTTP server error:", error);
 			console.error(
@@ -316,11 +319,26 @@ server
 		process.exit(1);
 	});
 
-// Handle process termination
-process.on("SIGTERM", () => {
-	process.exit(0);
-});
+// Store httpServer reference for cleanup
+let httpServerRef: any = null;
 
-process.on("SIGINT", () => {
-	process.exit(0);
-});
+// Handle process termination
+const gracefulShutdown = () => {
+	console.log("[MCP-HTTP] Shutting down gracefully...");
+	if (httpServerRef) {
+		httpServerRef.close(() => {
+			console.log("[MCP-HTTP] HTTP server closed");
+			process.exit(0);
+		});
+		// Force exit after 1 second if server doesn't close
+		setTimeout(() => {
+			console.log("[MCP-HTTP] Forcing exit...");
+			process.exit(0);
+		}, 1000);
+	} else {
+		process.exit(0);
+	}
+};
+
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);

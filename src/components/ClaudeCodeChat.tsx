@@ -29,6 +29,7 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 	});
 	const [input, setInput] = React.useState("");
 	const [isDragging, setIsDragging] = React.useState(false);
+	const [isUltrathinkEnabled, setIsUltrathinkEnabled] = React.useState(false);
 	const [pendingPermissions, setPendingPermissions] = React.useState<
 		PermissionRequest[]
 	>([]);
@@ -76,10 +77,14 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 	const handleSend = async () => {
 		if (!input.trim() || state.isLoading || !claudeService.current) return;
 
+		const messageContent = isUltrathinkEnabled 
+			? input.trim() + " ultrathink"
+			: input.trim();
+		
 		const userMessage: Message = {
 			id: Date.now().toString(),
 			role: "user",
-			content: input.trim(),
+			content: messageContent,
 			timestamp: Date.now(),
 		};
 
@@ -373,6 +378,7 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 						<MessageBubble
 							key={message.id}
 							message={message}
+							messages={state.messages}
 							onPermissionRespond={
 								message.type === "permission_request" &&
 								message.permissionRequest
@@ -442,6 +448,16 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 							rows={1}
 						/>
 					</div>
+					<div className="claude-code-ultrathink-checkbox">
+						<label>
+							<input
+								type="checkbox"
+								checked={isUltrathinkEnabled}
+								onChange={(e) => setIsUltrathinkEnabled(e.target.checked)}
+							/>
+							<span>ultrathink</span>
+						</label>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -450,11 +466,13 @@ export const ClaudeCodeChat: React.FC<ClaudeCodeChatProps> = ({
 
 interface MessageBubbleProps {
 	message: Message;
+	messages: Message[];
 	onPermissionRespond?: (allowed: boolean) => void;
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({
 	message,
+	messages,
 	onPermissionRespond,
 }) => {
 	const [isExpanded, setIsExpanded] = React.useState(false);
@@ -556,6 +574,54 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 									</div>
 								</div>
 							)}
+						</div>
+					)}
+				</div>
+			</div>
+		);
+	}
+
+	if (messageType === "thinking" && message.thinking) {
+		// Auto-expand thinking messages initially
+		const [isThinkingExpanded, setIsThinkingExpanded] = React.useState(true);
+		
+		// Auto-collapse when next message arrives
+		React.useEffect(() => {
+			// Find the current message index
+			const currentIndex = messages.findIndex(m => m.id === message.id);
+			if (currentIndex !== -1 && currentIndex < messages.length - 1) {
+				// There's a newer message, so collapse
+				setIsThinkingExpanded(false);
+			}
+		}, [messages, message.id]);
+
+		return (
+			<div className="claude-code-message claude-code-message-assistant">
+				<div className="claude-code-thinking-bubble">
+					<button
+						type="button"
+						className="claude-code-thinking-header"
+						onClick={() => setIsThinkingExpanded(!isThinkingExpanded)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								setIsThinkingExpanded(!isThinkingExpanded);
+							}
+						}}
+					>
+						<span className="claude-code-thinking-arrow">
+							{isThinkingExpanded ? "▼" : "▶"}
+						</span>
+						<span className="claude-code-thinking-title">
+							Claude is thinking...
+						</span>
+					</button>
+
+					{isThinkingExpanded && (
+						<div className="claude-code-thinking-content">
+							<div className="claude-code-thinking-text">
+								{message.thinking}
+							</div>
 						</div>
 					)}
 				</div>

@@ -245,6 +245,20 @@ export class ClaudeCodeService {
 												// Store mapping for later update
 												toolUseMessageIds.set(block.id, messageId);
 											}
+										} else if (block.type === "thinking" && block.thinking) {
+											// Handle thinking message
+											const thinkingMessageId = `thinking-${Date.now()}`;
+											const thinkingMessage: Message = {
+												id: thinkingMessageId,
+												role: "assistant",
+												content: "",
+												timestamp: Date.now(),
+												type: "thinking",
+												thinking: block.thinking,
+											};
+											if (onMessage) {
+												onMessage(thinkingMessage);
+											}
 										} else {
 											console.debug("unknown message:", block);
 										}

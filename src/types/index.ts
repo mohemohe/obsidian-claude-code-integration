@@ -16,7 +16,7 @@ export interface PermissionRequest {
 	timestamp: number;
 }
 
-export type MessageType = "text" | "tool_use" | "permission_request";
+export type MessageType = "text" | "tool_use" | "permission_request" | "thinking";
 
 export interface Message {
 	id: string;
@@ -28,6 +28,7 @@ export interface Message {
 	toolResult?: ToolResult;
 	isToolComplete?: boolean;
 	permissionRequest?: PermissionRequest;
+	thinking?: string;
 }
 
 export interface ChatState {

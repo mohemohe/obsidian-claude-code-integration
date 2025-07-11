@@ -5,6 +5,32 @@ All notable changes to the Claude Code Obsidian Integration plugin will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2025-01-11
+
+### Added
+- Added "ultrathink" checkbox below the input field
+  - When checked, automatically appends " ultrathink" to the end of the message
+- Added accordion-style display for extended thinking mode messages
+  - Automatically expands while Claude is thinking
+  - Automatically collapses when the actual response begins
+
+### Changed
+- Improved input field layout
+
+### Fixed
+- Fixed MCP server port conflict issue on plugin restart
+  - Improved process verification logic to correctly identify running MCP server instances
+  - Added graceful shutdown handling for HTTP server to properly release ports
+  - Extended cleanup wait times to ensure ports are fully released before restart
+
+## [1.0.4] - 2025-01-10
+## [1.0.3] - 2025-01-09
+## [1.0.2] - 2025-01-08
+## [1.0.1] - 2025-01-07
+
+### Fixed
+- Minor bug fixes
+
 ## [1.0.0] - 2025-01-07
 
 ### Added
