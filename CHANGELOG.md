@@ -5,7 +5,7 @@ All notable changes to the Claude Code Obsidian Integration plugin will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.5] - 2025-01-11
+## [1.0.5]
 
 ### Added
 - Added "ultrathink" checkbox below the input field
@@ -23,15 +23,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added graceful shutdown handling for HTTP server to properly release ports
   - Extended cleanup wait times to ensure ports are fully released before restart
 
-## [1.0.4] - 2025-01-10
-## [1.0.3] - 2025-01-09
-## [1.0.2] - 2025-01-08
-## [1.0.1] - 2025-01-07
+## [1.0.4]
+## [1.0.3]
+## [1.0.2]
+## [1.0.1]
 
 ### Fixed
 - Minor bug fixes
 
-## [1.0.0] - 2025-01-07
+## [1.0.0]
 
 ### Added
 - Initial release of Claude Code Obsidian Integration
